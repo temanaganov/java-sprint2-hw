@@ -1,31 +1,39 @@
+import java.io.File;
 import java.util.ArrayList;
 
 public class YearlyReport {
     int year;
     ArrayList<YearlyReportRow> rows = new ArrayList<>();
-    FileReader reader = new FileReader();
 
-    YearlyReport(int year) {
+    YearlyReport(int year, String path) {
         this.year = year;
 
-        String content = reader.readFile("resources/y." + year + ".csv");
-        String[] lines = content.split(System.lineSeparator());
+        String filePath = path + File.separator + "y." + year + ".csv";
+        String content = FileReader.readFile(filePath);
 
-        for (int i = 1; i < lines.length; i++) {
-            String line = lines[i];
-            String[] data = line.split(",");
+        if (content != null) {
+            String[] lines = content.split(System.lineSeparator());
 
-            int month = Integer.parseInt(data[0]);
-            int amount = Integer.parseInt(data[1]);
-            boolean isExpense = Boolean.parseBoolean(data[2]);
+            for (int i = 1; i < lines.length; i++) {
+                String line = lines[i];
+                String[] data = line.split(",");
 
-            rows.add(new YearlyReportRow(month, amount, isExpense));
+                int month = Integer.parseInt(data[0]);
+                int amount = Integer.parseInt(data[1]);
+                boolean isExpense = Boolean.parseBoolean(data[2]);
+
+                rows.add(new YearlyReportRow(month, amount, isExpense));
+            }
+
+            System.out.println("Отчет за " + year + " год успешно считан.");
         }
-
-        System.out.println("Отчет за " + year + " год успешно считан.");
     }
 
     void getGeneralInfo() {
+        if (rows.size() == 0) {
+            System.out.println("Годовой отчет отсутствует.");
+            return;
+        }
         System.out.println("Год: " + year);
 
         System.out.println("Прибыль:");
@@ -34,11 +42,11 @@ public class YearlyReport {
             System.out.println("\t" + month + ": " + calculateProfitByMonth(month));
         }
 
-        System.out.println("Средний расход за все месяцы в году: " + getAverageExpenses());
-        System.out.println("Средний доход за все месяцы в году: " + getAverageIncome());
+        System.out.println("Средний расход за все месяцы в году: " + getAverageIncomeOrExpense(true));
+        System.out.println("Средний доход за все месяцы в году: " + getAverageIncomeOrExpense(false));
     }
 
-    int calculateProfitByMonth(int month) {
+    private int calculateProfitByMonth(int month) {
         int expenses = 0;
         int income = 0;
 
@@ -55,26 +63,12 @@ public class YearlyReport {
         return income - expenses;
     }
 
-    double getAverageExpenses() {
+    private double getAverageIncomeOrExpense(boolean isExpense) {
         double sum = 0;
         int count = 0;
 
         for (YearlyReportRow row : rows) {
-            if (row.isExpense) {
-                count++;
-                sum += row.amount;
-            }
-        }
-
-        return sum / count;
-    }
-
-    double getAverageIncome() {
-        double sum = 0;
-        int count = 0;
-
-        for (YearlyReportRow row : rows) {
-            if (!row.isExpense) {
+            if (row.isExpense == isExpense) {
                 count++;
                 sum += row.amount;
             }

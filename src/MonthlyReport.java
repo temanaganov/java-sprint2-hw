@@ -1,17 +1,17 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MonthlyReport {
-    FileReader reader = new FileReader();
     HashMap<Integer, MonthlyReportTable> months;
 
-    public MonthlyReport(int year) {
+    public MonthlyReport(int year, String path) {
         months = new HashMap<>();
 
         for (int i = 1; i <= 12; i++) {
             String month = String.format("%02d", i);
-            String path = "resources/m." + year + month + ".csv";
-            String content = reader.readFile(path);
+            String filePath = path + File.separator + "m." + year + month + ".csv";
+            String content = FileReader.readFile(filePath);
 
             if (content != null) {
                 ArrayList<MonthlyReportRow> rows = new ArrayList<>();
@@ -36,25 +36,30 @@ public class MonthlyReport {
     }
 
     int getTotalIncomeByMonth(int month) {
-        return months.get(month).getTotalIncome();
+        return months.get(month).getTotalIncomeOrExpense(false);
     }
 
     int getTotalExpenseByMonth(int month) {
-        return months.get(month).getTotalExpense();
+        return months.get(month).getTotalIncomeOrExpense(true);
     }
 
     void getGeneralInfo() {
+        if (months.size() == 0) {
+            System.out.println("Месячные отчеты отсутствуют.");
+            return;
+        }
+
         String formatString = "%-15s%-50s%-50s%n";
         System.out.printf(formatString, "Номер месяца", "Самый прибыльный товар", "Самая большая трата");
 
         for (MonthlyReportTable month : months.values()) {
-            MonthlyReportRow mostIncomeProduct = month.getMostIncomeProduct();
-            MonthlyReportRow mostExpensesProduct = month.getMostExpenseProduct();
+            MonthlyReportRow mostIncomeProduct = month.getMostIncomeOrExpenseProduct(false);
+            MonthlyReportRow mostExpenseProduct = month.getMostIncomeOrExpenseProduct(true);
             System.out.printf(
                     formatString,
                     month.month,
                     mostIncomeProduct.name + ": " + mostIncomeProduct.sumOfOne * mostIncomeProduct.quantity,
-                    mostExpensesProduct.name + ": " + mostExpensesProduct.sumOfOne * mostExpensesProduct.quantity
+                    mostExpenseProduct.name + ": " + mostExpenseProduct.sumOfOne * mostExpenseProduct.quantity
             );
         }
     }

@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 public class Main {
+    static String reportsPath = "resources";
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         MonthlyReport monthlyReport = null;
@@ -25,17 +27,17 @@ public class Main {
         }
     }
 
-    public static MonthlyReport readMonthlyReport() {
+    private static MonthlyReport readMonthlyReport() {
         int year = 2021;
-        return new MonthlyReport(year);
+        return new MonthlyReport(year, reportsPath);
     }
 
-    public static YearlyReport readYearlyReport() {
+    private static YearlyReport readYearlyReport() {
         int year = 2021;
-        return new YearlyReport(year);
+        return new YearlyReport(year, reportsPath);
     }
 
-    public static void compareReports(YearlyReport yearlyReport, MonthlyReport monthlyReport) {
+    private static void compareReports(YearlyReport yearlyReport, MonthlyReport monthlyReport) {
         if (monthlyReport == null) System.out.println("Месячные отчеты отсутствуют.");
         if (yearlyReport == null) System.out.println("Годовой отчет отсутствует.");
         if (monthlyReport == null || yearlyReport == null) return;
@@ -58,7 +60,7 @@ public class Main {
         System.out.println("Сверка отчетов завершена.");
     }
 
-    public static void getMonthlyReportInfo(MonthlyReport report) {
+    private static void getMonthlyReportInfo(MonthlyReport report) {
         if (report == null) {
             System.out.println("Месячные отчеты отсутствуют.");
             return;
@@ -67,7 +69,7 @@ public class Main {
         report.getGeneralInfo();
     }
 
-    public static void getYearlyReportInfo(YearlyReport report) {
+    private static void getYearlyReportInfo(YearlyReport report) {
         if (report == null) {
             System.out.println("Годовой отчет отсутствуют.");
             return;
@@ -76,7 +78,7 @@ public class Main {
         report.getGeneralInfo();
     }
 
-    public static void printMenu() {
+    private static void printMenu() {
         String[] pointsOfMenu = {
                 "Считать все месячные отчёты",
                 "Считать годовой отчёт",

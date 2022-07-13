@@ -9,11 +9,11 @@ public class MonthlyReportTable {
         this.rows = rows;
     }
 
-    int getTotalIncome() {
+    int getTotalIncomeOrExpense(boolean isExpense) {
         int sum = 0;
 
         for (MonthlyReportRow row : rows) {
-            if (!row.isExpense) {
+            if (row.isExpense == isExpense) {
                 sum += row.sumOfOne * row.quantity;
             }
         }
@@ -21,46 +21,14 @@ public class MonthlyReportTable {
         return sum;
     }
 
-    int getTotalExpense() {
-        int sum = 0;
-
-        for (MonthlyReportRow row : rows) {
-            if (row.isExpense) {
-                sum += row.sumOfOne * row.quantity;
-            }
-        }
-
-        return sum;
-    }
-
-    MonthlyReportRow getMostIncomeProduct() {
+    MonthlyReportRow getMostIncomeOrExpenseProduct(boolean isExpense) {
         int max = 0;
         MonthlyReportRow product = null;
 
         for (MonthlyReportRow row : rows) {
             int currentIncome;
 
-            if (!row.isExpense) {
-                currentIncome = row.sumOfOne * row.quantity;
-
-                if (currentIncome > max) {
-                    max = currentIncome;
-                    product = row;
-                }
-            }
-        }
-
-        return product;
-    }
-
-    MonthlyReportRow getMostExpenseProduct() {
-        int max = 0;
-        MonthlyReportRow product = null;
-
-        for (MonthlyReportRow row : rows) {
-            int currentIncome;
-
-            if (row.isExpense) {
+            if (row.isExpense == isExpense) {
                 currentIncome = row.sumOfOne * row.quantity;
 
                 if (currentIncome > max) {
